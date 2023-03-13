@@ -1,6 +1,6 @@
 {
-  "name": "auth",
-  "version": "0.0.1",
+  "name": "@huntondemand/auth",
+  "version": "0.0.2",
   "description": "Hunt on Demand Nuxt 3 Auth Module",
   "repository": "https://github.com/huntondemand/auth",
   "license": "MIT",
@@ -22,7 +22,7 @@
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
-    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "release": "npm run lint && npm run prepack && changelogen --release && npm publish --access public && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch"

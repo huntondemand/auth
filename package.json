@@ -1,6 +1,6 @@
 {
   "name": "@huntondemand/auth",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Hunt on Demand Nuxt 3 Auth Module",
   "repository": "https://github.com/huntondemand/auth",
   "license": "MIT",

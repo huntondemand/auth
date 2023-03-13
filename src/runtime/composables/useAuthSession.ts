@@ -56,7 +56,8 @@ export default function () {
       );
     } else {
       if (isRefreshTokenExpired()) {
-        accessToken.value = null
+        accessToken.value = ''
+        refreshToken.value = ''
       }
     }
 
@@ -83,17 +84,6 @@ export default function () {
     const refreshToken = useRefreshToken();
     const accessToken = useAccessToken();
 
-    if (isRefreshTokenExpired()) {
-      await revokeSession()
-    }
-    const tokens: { token: string, refresh_token: string } = await $fetch('/auth/refresh', {
-      baseURL: publicConfig.baseUrl,
-      method: 'POST',
-      body: {
-        refresh_token: refreshToken.value,
-      },
-    })
-
     if (process.server) {
       accessToken.value = getCookie(
         event,
@@ -103,12 +93,26 @@ export default function () {
         event,
         `${publicConfig.cookieOptions.name}-refresh-token`
       );
-      setCookie(event, `${publicConfig.cookieOptions.name}-access-token`, tokens.token)
-      setCookie(event, `${publicConfig.cookieOptions.name}-refresh-token`, tokens.refresh_token)
     }
-    accessToken.value = tokens.token
-    refreshToken.value = tokens.refresh_token
-    console.log('tokens refreshed!');
+    if (refreshToken.value) {
+      const tokens: { token: string, refresh_token: string } = await $fetch('/auth/refresh', {
+        baseURL: publicConfig.baseUrl,
+        method: 'POST',
+        body: {
+          refresh_token: refreshToken.value,
+        },
+      })
+      if (process.server) {
+        setCookie(event, `${publicConfig.cookieOptions.name}-access-token`, tokens.token)
+        setCookie(event, `${publicConfig.cookieOptions.name}-refresh-token`, tokens.refresh_token)
+      } else {
+        accessToken.value = tokens.token
+        refreshToken.value = tokens.refresh_token
+      }
+      console.log('tokens refreshed!');
+    } else {
+      console.log('tokens refresh not possible!');
+    }
   }
 
   async function revokeSession(): Promise<void> {
@@ -116,9 +120,9 @@ export default function () {
     const refreshToken = useRefreshToken();
     const isLoggedIn = useLoggedIn()
     const user = useUser();
-    accessToken.value = null
+    accessToken.value = ''
     isLoggedIn.value = false
-    refreshToken.value = null
+    refreshToken.value = ''
     user.value = null
   }
 

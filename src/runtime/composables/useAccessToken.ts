@@ -4,5 +4,5 @@ export const useAccessToken = () => {
   const { cookieOptions } = useRuntimeConfig().public.auth
   const cookieName = `${cookieOptions.name}-access-token`
 
-  return useCookie<string | null | undefined>(cookieName, { sameSite: true, maxAge: 20 * 60, default: () => '' })
+  return useCookie<string | null | undefined>(cookieName, { sameSite: true, maxAge: 60 * 60 * 12, default: () => '' })
 }

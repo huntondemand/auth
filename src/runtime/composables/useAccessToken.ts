@@ -1,4 +1,4 @@
-import { useCookie } from '#imports'
+import { useCookie, useRuntimeConfig } from '#imports'
 
 export const useAccessToken = () => {
   const {  cookieOptions } = useRuntimeConfig().public.auth

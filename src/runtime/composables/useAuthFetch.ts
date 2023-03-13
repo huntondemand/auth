@@ -3,6 +3,7 @@ import useAuthSession from "./useAuthSession";
 import { defu } from "defu";
 import { $fetch } from "ofetch";
 import { useAccessToken } from './useAccessToken'
+import { useRuntimeConfig } from '#app'
 export default async function <DataT>(
   path: string,
   fetchOptions: FetchOptions<"json"> = {}

@@ -9,8 +9,8 @@ import {
 } from "#app";
 import { getCookie, setCookie } from "h3";
 import { useLoggedIn } from "./useLoggedIn";
-
-
+import { useAccessToken } from './useAccessToken'
+import { useRefreshToken } from './useRefreshToken'
 export default function () {
   const publicConfig = useRuntimeConfig().public.auth;
   const event = useRequestEvent();

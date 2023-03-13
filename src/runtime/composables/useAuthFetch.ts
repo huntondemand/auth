@@ -2,6 +2,7 @@ import type { FetchOptions } from "ofetch";
 import useAuthSession from "./useAuthSession";
 import { defu } from "defu";
 import { $fetch } from "ofetch";
+import { useAccessToken } from './useAccessToken'
 export default async function <DataT>(
   path: string,
   fetchOptions: FetchOptions<"json"> = {}

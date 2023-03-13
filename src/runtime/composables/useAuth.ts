@@ -6,7 +6,8 @@ import type { H3Error } from "h3";
 import useAuthFetch from "./useAuthFetch";
 import { useRuntimeConfig, useRoute, navigateTo } from "#app";
 import useAuthSession from "./useAuthSession";
-
+import { useAccessToken } from './useAccessToken'
+import { useRefreshToken } from './useRefreshToken'
 type FetchReturn<T> = Promise<AsyncData<T | null, FetchError<H3Error> | null>>;
 
 export default function () {

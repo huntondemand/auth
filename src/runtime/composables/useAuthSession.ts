@@ -4,7 +4,8 @@ import type { User } from "../types";
 import jwtDecode from "jwt-decode";
 import {
   useRuntimeConfig,
-  useState
+  useState,
+  useRequestEvent
 } from "#app";
 import { getCookie, setCookie } from "h3";
 import { useLoggedIn } from "./useLoggedIn";

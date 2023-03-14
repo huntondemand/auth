@@ -1,24 +1,29 @@
+import { useRuntimeConfig, useRoute, navigateTo } from "#imports";
 import { useLoggedIn } from './useLoggedIn';
 import type { User } from "../types";
 import type { AsyncData } from "#app";
 import { FetchError, FetchResponse } from "ofetch";
 import type { H3Error } from "h3";
-import useAuthFetch from "./useAuthFetch";
-import { useRuntimeConfig, useRoute, navigateTo } from "#app";
-import useAuthSession from "./useAuthSession";
+import { useAuthFetch } from "./useAuthFetch";
+import { useAuthSession } from "./useAuthSession";
 import { useAccessToken } from './useAccessToken'
 import { useRefreshToken } from './useRefreshToken'
 type FetchReturn<T> = Promise<AsyncData<T | null, FetchError<H3Error> | null>>;
 
-export default function () {
-  const { useUser, revokeSession } = useAuthSession();
+export function useAuth() {
   const publicConfig = useRuntimeConfig().public.auth;
-  const route = useRoute();
+  const { useUser, revokeSession } = useAuthSession();
+
+  const accessToken = useAccessToken();
+  const refreshToken = useRefreshToken();
+  const isLoggedIn = useLoggedIn()
+  const user = useUser();
+
   async function login(credentials: {
     email: string;
     password: string;
   }) {
-    const res: FetchResponse<{
+    const result: FetchResponse<{
       token: string
       refresh_token: string
     }> = await $fetch.raw("/auth/login", {
@@ -29,31 +34,31 @@ export default function () {
         password: credentials.password,
       },
     }).catch((error) => error.data)
-    console.log(res.ok && res._data);
 
-    if (res.ok && res._data) {
-      const accessToken = useAccessToken();
-      const refreshToken = useRefreshToken();
-      const isLoggedIn = useLoggedIn()
-      const user = useUser();
+    if (result.ok && result._data) {
+
       isLoggedIn.value = true
-      accessToken.value = res._data.token;
-      refreshToken.value = res._data.refresh_token;
+      accessToken.value = result._data.token;
+      refreshToken.value = result._data.refresh_token;
+
       if (accessToken.value) {
-        const resUser: { user: User } = await $fetch("/auth/me", {
+        const resultUser: { user: User } = await $fetch("/auth/me", {
           method: "GET",
           baseURL: publicConfig.baseUrl,
           headers: {
             Authorization: "Bearer " + accessToken.value,
           }
         })
-        user.value = resUser.user
+
+        user.value = resultUser.user
       }
+
       if (accessToken.value) {
         await navigateTo(publicConfig.redirect.home);
       }
+
     }
-    return res.ok;
+    return result.ok;
   }
 
   async function fetchUser(): Promise<void> {
@@ -65,7 +70,8 @@ export default function () {
   async function logout(): Promise<void> {
     const accessToken = useAccessToken()
     accessToken.value = null
-    await navigateTo(publicConfig.redirect.logout);
+    refreshToken.value = null
+    await navigateTo(publicConfig.redirect.logout)
     revokeSession()
   }
 
@@ -94,6 +100,7 @@ export default function () {
   }
 
   async function resetPassword(password: string): FetchReturn<void> {
+    const route = useRoute();
     return $fetch("/api/auth/password/reset", {
       method: "PUT",
       credentials: "omit",

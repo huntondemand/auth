@@ -1,8 +1,8 @@
 import { useCookie, useRuntimeConfig } from '#imports'
 
 export const useAccessToken = () => {
-  const { cookieOptions } = useRuntimeConfig().public.auth
-  const cookieName = `${cookieOptions.name}-access-token`
+  const { auth: { cookieOptions } } = useRuntimeConfig().public
+  const cookieName = `${cookieOptions.name}_access_token`
 
-  return useCookie<string | null | undefined>(cookieName, { sameSite: true, maxAge: 60 * 60 * 12, default: () => '' })
+  return useCookie<string | null | undefined>(cookieName, { sameSite: 'strict', maxAge: 12 * 3600 * 7, default: () => null })
 }

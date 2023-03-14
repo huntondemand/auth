@@ -1,25 +1,30 @@
 import type { FetchOptions } from "ofetch";
-import useAuthSession from "./useAuthSession";
+import { useAuthSession } from "./useAuthSession";
 import { defu } from "defu";
 import { $fetch } from "ofetch";
 import { useAccessToken } from './useAccessToken'
-import { useRuntimeConfig } from '#app'
-export default async function <DataT>(
+import { useRuntimeConfig } from '#imports'
+
+export async function useAuthFetch<DataT>(
   path: string,
   fetchOptions: FetchOptions<"json"> = {}
 ): Promise<DataT> {
-console.log('auth_fetch');
+
+  const { baseUrl } = useRuntimeConfig().public.auth;
+  fetchOptions.baseURL = baseUrl
 
   const { refresh } = useAuthSession();
-  const { baseUrl } = useRuntimeConfig().public.auth;
-  const accessToken = useAccessToken();
-  fetchOptions.baseURL = baseUrl
   await refresh();
+
+  console.log('auth_fetch');
+
+  const accessToken = useAccessToken();
   fetchOptions.headers = defu(
     {
       Authorization: "Bearer " + accessToken.value,
     },
     fetchOptions.headers
   );
+
   return $fetch<DataT>(path, fetchOptions);
 }

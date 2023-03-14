@@ -1,4 +1,4 @@
-import { defineNuxtRouteMiddleware, useRuntimeConfig, navigateTo } from "#app";
+import { defineNuxtRouteMiddleware, useRuntimeConfig, navigateTo } from "#imports";
 import { useAccessToken } from '../composables/useAccessToken'
 export default defineNuxtRouteMiddleware((to) => {
   const publicConfig = useRuntimeConfig().public.auth;
@@ -21,3 +21,9 @@ export default defineNuxtRouteMiddleware((to) => {
     return navigateTo(publicConfig.redirect.login);
   }
 });
+
+declare module '#app' {
+  interface PageMeta {
+    auth?: boolean
+  }
+}

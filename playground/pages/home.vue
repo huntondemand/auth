@@ -8,8 +8,8 @@
       Logout
     </button>
     <p>User</p>
-    <p>{{ user!.id || 'id' }}</p>
-    <p>{{ user!.email || 'email' }}</p>
+    <p>{{ user?.id || 'id' }}</p>
+    <p>{{ user?.email || 'email' }}</p>
     <img
       :src="pictureUrl"
       height="40"
@@ -38,7 +38,9 @@
 </template>
 
 <script setup lang="ts">
-import { useLoggedIn } from '~~/../src/runtime/composables/useLoggedIn';
+import { useAuth, definePageMeta, useAuthSession, useLoggedIn, computed, ref } from '#imports';
+
+
 
 definePageMeta({ middleware: "auth" })
 

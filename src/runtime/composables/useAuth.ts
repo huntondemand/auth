@@ -62,6 +62,7 @@ export function useAuth() {
   }
 
   async function fetchUser(): Promise<void> {
+    console.log('fetchUser')
     const user = useUser();
     const res = await useAuthFetch<{ user: User }>("/auth/me");
     user.value = res.user

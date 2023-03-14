@@ -1,3 +1,4 @@
+import { AuthUser } from "#auth";
 import type { Ref } from "vue";
 import type { User } from "../types";
 import jwtDecode from "jwt-decode";
@@ -7,11 +8,12 @@ import {
   useRequestEvent
 } from "#imports";
 
-import { getCookie, setCookie } from "h3";
+import { getCookie } from "h3";
 
 import { useLoggedIn } from "./useLoggedIn";
 import { useAccessToken } from './useAccessToken'
 import { useRefreshToken } from './useRefreshToken'
+
 
 export function useAuthSession() {
   const publicConfig = useRuntimeConfig().public.auth;
@@ -20,7 +22,7 @@ export function useAuthSession() {
   const refreshToken = useRefreshToken();
   const isLoggedIn = useLoggedIn()
 
-  const useUser: () => Ref<User | null | undefined> = () => useState<User | null | undefined>("auth_user", () => null);
+  const useUser: () => Ref<AuthUser | null | undefined> = () => useState<AuthUser | null | undefined>("auth_user", () => null);
 
   const user = useUser()
 
@@ -106,13 +108,15 @@ export function useAuthSession() {
         },
       })
 
-      if (process.server) {
+/*       if (process.server) {
         setCookie(event, `${publicConfig.cookieOptions.name}-access-token`, tokens.token)
         setCookie(event, `${publicConfig.cookieOptions.name}-refresh-token`, tokens.refresh_token)
       } else {
         accessToken.value = tokens.token
         refreshToken.value = tokens.refresh_token
-      }
+      } */
+      accessToken.value = tokens.token
+      refreshToken.value = tokens.refresh_token
       console.log('tokens refreshed!');
     } else {
       console.log('tokens refresh not possible!');

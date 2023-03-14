@@ -1,8 +1,10 @@
 import { defineNuxtModule, addPlugin, createResolver, logger, addImportsDir, addTemplate } from '@nuxt/kit'
+import { genInterface } from 'knitwork'
+import { defu } from "defu";
 import { fileURLToPath } from "url";
 import type { PublicConfig, PrivateConfig } from "./runtime/types";
 export interface ModuleOptions extends PrivateConfig, PublicConfig { }
-import { defu } from "defu";
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'auth-module',
@@ -15,6 +17,7 @@ export default defineNuxtModule<ModuleOptions>({
     cookieOptions: {
       name: 'hod'
     },
+    user: { id: 'number', email: 'string' },
     redirect: {
       login: "",
       logout: "",
@@ -78,26 +81,7 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () =>
         [
           "declare module '#auth' {",
-          `  const verifyAccessToken: typeof import('${resolve(
-            runtimeDir,
-            "server/utils"
-          )}').verifyAccessToken`,
-          `  const getAccessTokenFromHeader: typeof import('${resolve(
-            runtimeDir,
-            "server/utils"
-          )}').getAccessTokenFromHeader`,
-          `  const sendMail: typeof import('${resolve(
-            runtimeDir,
-            "server/utils"
-          )}').sendMail`,
-          `  const handleError: typeof import('${resolve(
-            runtimeDir,
-            "server/utils"
-          )}').handleError`,
-          `  const prisma: typeof import('${resolve(
-            runtimeDir,
-            "server/utils"
-          )}').prisma`,
+            genInterface('AuthUser', options.user),
           "}",
         ].join("\n"),
     });
@@ -113,6 +97,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig = defu(nuxt.options.runtimeConfig, {
       app: {},
       public: {
+        user: options.user,
         auth: {
           baseUrl: options.baseUrl,
           enableGlobalAuthMiddleware: options.enableGlobalAuthMiddleware,

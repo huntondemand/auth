@@ -34,8 +34,13 @@ export type RefreshTokenPayload = {
 
 export type PrivateConfig = {}
 
+export type UserTypeObject = {
+  [key: string]: string | UserTypeObject;
+};
+
 export type PublicConfig = {
   baseUrl: string;
+  user: UserTypeObject
   enableGlobalAuthMiddleware?: boolean;
   cookieOptions?: {
     name: string
